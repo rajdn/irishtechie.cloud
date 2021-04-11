@@ -9,7 +9,7 @@ resource endpoint 'Microsoft.Cdn/profiles/endpoints@2020-04-15' = {
   properties: {
     originHostHeader: storageAccountHostName
     optimizationType: 'GeneralWebDelivery'
-    isHttpAllowed: false
+    isHttpAllowed: true
     isHttpsAllowed: true
     queryStringCachingBehavior: 'IgnoreQueryString'
     contentTypesToCompress: [
@@ -20,6 +20,37 @@ resource endpoint 'Microsoft.Cdn/profiles/endpoints@2020-04-15' = {
       'text/javascript'
     ]
     isCompressionEnabled: true
+    deliveryPolicy: {
+      rules: [
+        {
+          name: 'EnforceHTTPS'
+          order: 1
+          conditions: [
+            {
+              name: 'RequestScheme'
+              parameters: {
+                matchValues: [
+                  'HTTP'
+                ]
+                operator: 'Equal'
+                negateCondition: false
+                '@odata.type': '#Microsoft.Azure.Cdn.Models.DeliveryRuleRequestSchemeConditionParameters'
+              }
+            }
+          ]
+          actions: [
+            {
+              name: 'UrlRedirect'
+              parameters: {
+                redirectType: 'Found'
+                destinationProtocol: 'Https'
+                '@odata.type': '#Microsoft.Azure.Cdn.Models.DeliveryRuleUrlRedirectActionParameters'
+              }
+            }
+          ]
+        }
+      ]
+    }
     origins: [
       {
         name: 'primary'
@@ -32,19 +63,3 @@ resource endpoint 'Microsoft.Cdn/profiles/endpoints@2020-04-15' = {
   }
 }
 
-resource customDomainWWW 'Microsoft.Cdn/profiles/endpoints/customdomains@2020-09-01' = {
-  name: '${cdnProfileName}/${endPointName}/www-irishtechie-cloud'
-  properties: {
-    hostName: 'www.irishtechie.cloud'
-  }
-}
-
-resource customDomainStaging 'Microsoft.Cdn/profiles/endpoints/customdomains@2020-09-01' = {
-  name: '${cdnProfileName}/${endPointName}/staging-irishtechie-cloud'
-  properties: {
-    hostName: 'staging.irishtechie.cloud'
-  }
-}
-
-// output hostName string = endpoint.properties.hostName
-// output originHostHeader string = endpoint.properties.originHostHeader

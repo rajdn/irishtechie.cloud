@@ -12,8 +12,10 @@ param resourcePrefix string = 'irishtechie'
 param skuName string = 'Standard_RAGRS'
 param cdnProfileName string = 'cdnp-${resourcePrefix}-${environment}'
 param endPointName string = 'cdne-${resourcePrefix}-${environment}'
+param endPointNameStage string = 'cdne-${resourcePrefix}-${environment}-stage'
 
 var storageAccountHostName  = storageAcc.outputs.staticWebsiteHostName
+var storageAccountHostNameStage  = storageAccStage.outputs.staticWebsiteHostName
 
 // deploy a resource group to the subscription scope
 resource NewRG 'Microsoft.Resources/resourceGroups@2020-06-01' = {
@@ -68,4 +70,29 @@ module cdnEndpoint 'cdnendpoint.bicep' = {
   }
 }
 
-output storageDomain string = storageAcc.outputs.staticWebsiteHostName
+module cdnEndpointStage 'cdnendpoint.bicep' = {
+  name: 'cdnEndpointStage'
+  // Change deployment context to RG
+  scope: resourceGroup(NewRG.name)
+  params: {
+    cdnProfileName: cdnProfileName
+    endPointName: endPointNameStage
+    storageAccountHostName: storageAccountHostNameStage
+    location: location
+  }
+}
+
+module cdneCustomDomain 'cdnecustomdomain.bicep' = {
+  name: 'cdneCustomDomain'
+  dependsOn: [
+    cdnEndpoint
+    cdnEndpointStage
+  ]
+  // Change deployment context to RG
+  scope: resourceGroup(NewRG.name)
+  params: {
+    cdnProfileName: cdnProfileName
+    endPointName: endPointName
+    endPointNameStage: endPointNameStage
+  }
+}
