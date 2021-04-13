@@ -1,9 +1,7 @@
-// This file operates at subscription level. This is an example of a modular deployment. It creates a resource group then deploys a storage account via another bicep file to that resource group.
-
-// this file can only be deployed at a subscription scope
+// This file operates at subscription level.
 targetScope = 'subscription'
 
-// Set the parameters, along with defaults per recommended practices
+// Set the parameters and default values, if required.
 param environment string = 'blog'
 param storageenv1 string = 'prod'
 param storageenv2 string = 'stage'
@@ -23,7 +21,7 @@ resource NewRG 'Microsoft.Resources/resourceGroups@2020-06-01' = {
   location: location
 }
 
-// Call a separate bicep file to deploy storage resource.
+// Call a separate bicep file to deploy storage account..
 module storageAcc 'storage.bicep' = {
   name: 'storageAcc'
   // Change deployment context to RG
@@ -36,6 +34,7 @@ module storageAcc 'storage.bicep' = {
   }
 }
 
+// Call a separate bicep file to deploy storage account.
 module storageAccStage 'storage.bicep' = {
   name: 'storageAccStage'
   // Change deployment context to RG
@@ -48,6 +47,7 @@ module storageAccStage 'storage.bicep' = {
   }
 }
 
+// Call a separate bicep file to deploy CDN Profile.
 module cdnProfile 'cdnprofile.bicep' = {
   name: 'cdnProfile'
   // Change deployment context to RG
@@ -58,6 +58,7 @@ module cdnProfile 'cdnprofile.bicep' = {
   }
 }
 
+// Call a separate bicep file to deploy CDN Endpoint.
 module cdnEndpoint 'cdnendpoint.bicep' = {
   name: 'cdnEndpoint'
   // Change deployment context to RG
@@ -70,6 +71,7 @@ module cdnEndpoint 'cdnendpoint.bicep' = {
   }
 }
 
+// Call a separate bicep file to deploy CDN Endpoint.
 module cdnEndpointStage 'cdnendpoint.bicep' = {
   name: 'cdnEndpointStage'
   // Change deployment context to RG
@@ -82,6 +84,7 @@ module cdnEndpointStage 'cdnendpoint.bicep' = {
   }
 }
 
+// Call a separate bicep file to add a custom domain to the CDN Endpoints.
 module cdneCustomDomain 'cdnecustomdomain.bicep' = {
   name: 'cdneCustomDomain'
   dependsOn: [

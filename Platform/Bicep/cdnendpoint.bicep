@@ -1,8 +1,10 @@
+// Set the parameters and default values, if required.
 param location string
 param cdnProfileName string
 param endPointName string
 param storageAccountHostName string
 
+// Deploy a CDN Endpoint with Rules Engine config for HTTPS Enforcement.
 resource endpoint 'Microsoft.Cdn/profiles/endpoints@2020-04-15' = {
   location: location
   name: '${cdnProfileName}/${endPointName}'
