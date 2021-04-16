@@ -21,7 +21,7 @@ resource NewRG 'Microsoft.Resources/resourceGroups@2020-06-01' = {
   location: location
 }
 
-// Call a separate bicep file to deploy storage account..
+// Call a separate bicep file to deploy storage account.
 module storageAcc 'storage.bicep' = {
   name: 'storageAcc'
   // Change deployment context to RG
