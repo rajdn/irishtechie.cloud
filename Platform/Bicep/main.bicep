@@ -1,7 +1,7 @@
-// This file operates at subscription level.
+// Set the target scope for this file.
 targetScope = 'subscription'
 
-// Set the parameters and default values, if required.
+// Set the parameters and variables with default values, if required..
 param environment string = 'blog'
 param storageenv1 string = 'prod'
 param storageenv2 string = 'stage'
