@@ -12,10 +12,6 @@ param location string = resourceGroup().location
 ])
 param skuName string
 
-param deploymentScriptTimestamp string = utcNow()
-param indexDocument string = 'index.html'
-param errorDocument404Path string = '404.html'
-
 // Define variables
 var stgname = 'sa${resourcePrefix}${environment}${storageenv}'
 
